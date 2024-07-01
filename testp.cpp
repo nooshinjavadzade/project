@@ -172,52 +172,48 @@ int main() {
     category cat[100];
     int num_cat = 0;
     string logged;
-    bool admin = false;
     while (1){
+        bool admin = false;
         cout << "hi , welcome to Quiz Of Kings" << endl;
-        cout << "Pleas enter the word <login> if you have an account" << endl;
-        cout << "If you dont have an account, pleas enter the word <register>" << endl;
+        cout << "Enter order commands to login or register" << endl;
+        cout << "Remember that the password should only be 4 characters long" << endl;
         cout << "Please enter a space before the command where there are cin.ignore commands, otherwise you will encounter an error" << endl;
-        string in1;
-        cin >> in1;
-        if (in1 == "register") {
-            while (1) {
-                cout << "pleas enter your username , password , first and last name" << endl;
-                cout << "Remember that the password should only be 4 characters long" << endl;
-                string input;
+        while(1){
+            string in1;
+            cin.ignore();
+            getline(cin, in1);
+            if (in1.find("register") != string::npos) {
                 string login[9];
-                cin.ignore();
-                getline(cin , input);
                 string word;
-                stringstream ss(input);
-                int count=0;
-                while (ss >> word){
+                stringstream ss(in1);
+                int count = 0;
+                while (ss >> word) {
                     login[count++] = word;
                 }
-                if (emptyy(login, 9) || login[0]!="register" || login[1] != "-u" || login[3]!= "-p" || login[5] != "-f" || login[7]!= "-l" || login[2] == "admin") {
+                if (emptyy(login, 9) || login[0] != "register" || login[1] != "-u" || login[3] != "-p" ||
+                    login[5] != "-f" || login[7] != "-l" || login[2] == "admin") {
                     cout << "There was a problem. Please enter all commands and information correctly" << endl;
                     continue;
                 } else if (login[4].length() != 4) {
                     cout << "the password should only be 4 characters long" << endl;
                     continue;
-                }
-                else{
+                } else {
                     bool find;
                     fstream file;
-                    file.open("users_information.txt" , ios::in);
+                    file.open("users_information.txt", ios::in);
                     string line;
-                    while (getline(file , line)){
-                        if (line.find(login[2])!= string::npos){
-                            cout << "This username already exists. Please enter another username" <<endl;
+                    while (getline(file, line)) {
+                        if (line.find(login[2]) != string::npos) {
+                            cout << "This username already exists. Please enter another username" << endl;
                             find = true;
                             break;
                         }
-                        if (file.eof()){
+                        if (file.eof()) {
                             find = false;
                         }
                     }
                     file.close();
-                    if(!find){
+                    if (!find) {
                         loggins[num_logs].username = login[2];
                         loggins[num_logs].password = login[4];
                         loggins[num_logs].first_name = login[6];
@@ -226,90 +222,79 @@ int main() {
                         logged = loggins[num_logs].username;
                         fstream filee;
                         filee.open("users_information.txt", ios::app);
-                        filee << loggins[num_logs].username << endl << loggins[num_logs].password << endl<< loggins[num_logs].first_name << endl << loggins[num_logs].last_name << endl << loggins[num_logs].total_rank << endl;
+                        filee << loggins[num_logs].username << endl << loggins[num_logs].password << endl
+                              << loggins[num_logs].first_name << endl << loggins[num_logs].last_name << endl
+                              << loggins[num_logs].total_rank << endl;
                         num_logs++;
                         filee.close();
                         cout << "You have successfully registered" << endl;
                         break;
-                    }
-                    else
+                    } else
                         continue;
                 }
-            }
-        }
-        else if (in1 == "login"){
-            while (1) {
-                cout << "Enter your username and password to log in to your account" << endl;
+            } else if (in1.find("login") != string::npos) {
                 string login[5];
-                string log;
-                cin.ignore();
-                getline(cin , log);
                 string word;
-                stringstream ss(log);
-                int count=0;
-                while (ss >> word){
+                stringstream ss(in1);
+                int count = 0;
+                while (ss >> word) {
                     login[count++] = word;
                 }
-                if (login[0]!= "login" || login[1] != "-u" || login[3] != "-p"){
+                if (login[0] != "login" || login[1] != "-u" || login[3] != "-p") {
                     cout << "Please enter the commands correctly" << endl;
                     continue;
-                }
-                else if (login[2] == "admin" && login[4] == "admin"){
+                } else if (login[2] == "admin" && login[4] == "admin") {
                     admin = true;
                     cout << "You have successfully logged in" << endl;
                     break;
-                }
-                else{
+                } else {
                     bool find = false;
                     bool pasword = false;
                     fstream file;
-                    file.open("users_information.txt" , ios::in);
+                    file.open("users_information.txt", ios::in);
                     string line;
-                    while (getline(file , line)){
-                        if (line.find(login[2]) != string::npos){
+                    while (getline(file, line)) {
+                        if (line.find(login[2]) != string::npos) {
                             find = true;
                             break;
                         }
                     }
-                    if (file.eof()){
+                    if (file.eof()) {
                         find = false;
                     }
                     file.close();
-                    file.open("users_information.txt" , ios::in);
-                    while (getline(file , line)){
-                        if (line.find(login[2]) != string::npos){
-                            getline(file , line);
-                            if (line.find(login[4])!= string::npos){
+                    file.open("users_information.txt", ios::in);
+                    while (getline(file, line)) {
+                        if (line.find(login[2]) != string::npos) {
+                            getline(file, line);
+                            if (line.find(login[4]) != string::npos) {
                                 pasword = true;
                                 break;
-                            }
-                            else{
+                            } else {
                                 pasword = false;
                                 break;
                             }
                         }
                     }
                     file.close();
-                    if (!find){
+                    if (!find) {
                         cout << "This username does not exist." << endl;
                         continue;
-                    }
-                    else if (!pasword){
+                    } else if (!pasword) {
                         cout << "The password is incorrect" << endl;
                         continue;
-                    }
-                    else{
+                    } else {
                         logged = login[2];
                         cout << "You have successfully logged in" << endl;
                         loggins[0].username = logged;
                         break;
                     }
                 }
+
+            } else {
+                cout << "Please enter the commands correctly" << endl;
+                continue;
             }
-        }
-        else{
-            cout << "Please enter the commands correctly" << endl;
-            continue;
         }
         while(!admin){
             cout << "Users main menu:" << endl;
@@ -319,7 +304,7 @@ int main() {
             cout << "If you want to return to the registration and login menu, please enter <Exit>" << endl;
             string in;
             getline(cin , in);
-            if (in == "add question"){
+            if (in.find("add question") != string::npos){
                 cout << "Enter the name of the category you want to add a question" << endl;
                 cout << "If you want to see the available categories, enter from the admin menu." << endl;
                 cout << "Whenever you want to return to the main menu of users, enter <back>" << endl;
@@ -334,6 +319,7 @@ int main() {
                     in[count++] = word;
                 }
                 if (search_in_file("cat.txt", in[2])){
+                    cout << "Enter <add question> to add a question" << endl;
                     string mewo;
                     cin.ignore();
                     getline(cin , mewo);
@@ -397,7 +383,7 @@ int main() {
                 }
 
             }
-            else if (in == "start game"){
+            else if (in.find("start game") != string::npos){
                 int count = 1;
                 cout << "Enter <show categories> to see categories" << endl;
                 string in;
@@ -502,7 +488,7 @@ int main() {
                     continue;
                 }
             }
-            else if (in == "scoreboard"){
+            else if (in.find("scoreboard") != string::npos){
                 scr people[100];
                 fstream file;
                 string input;
@@ -557,7 +543,7 @@ int main() {
                 }
 
             }
-            else if (in == "Exit")
+            else if (in.find("Exit") != string::npos)
                 break;
         }
         while (admin){
@@ -573,7 +559,7 @@ int main() {
                 while (1){
                     cout << "Enter the relevant commands to see categories or create and delete them" << endl;
                     string input;
-
+                    cin.ignore();
                     getline(cin, input);
                     string in_put[3];
                     string word;
@@ -622,6 +608,23 @@ int main() {
                         remove(filename.c_str());
                         rename("temp.txt" , filename.c_str());
                         cout << "category secsesfully deleted";
+                        file.open("qestion.txt" , ios::in);
+                        temp.open("temp.txt" , ios::out);
+                        while (getline(file , line)){
+                           if( line.find(in_put[2]) != string::npos){
+                               for (int i = 0; i < 6; ++i) {
+                                   getline(file , line);
+                               }
+                           }
+                           else{
+                               temp << line << endl;
+                           }
+                        }
+                        filename = "qestion.txt";
+                        file.close();
+                        temp.close();
+                        remove(filename.c_str());
+                        rename("temp.txt" , filename.c_str());
                         continue;
                     }
                     else if (input == "back")
@@ -731,6 +734,10 @@ int main() {
                                 }
                                 else{
                                     temp << line << endl;
+                                    for (int j = 0; j < 7; ++j) {
+                                        getline(file , line);
+                                        temp << line << endl;
+                                    }
                                 }
                                 line_num++;
                             }
@@ -738,7 +745,7 @@ int main() {
                             temp.close();
                             remove(filename.c_str());
                             rename("temp.txt" , filename.c_str());
-                            cout <<"Question successfully deleted" << endl;
+                            cout <<"Question successfully deleted. " << endl;
                         }
                     }
                 }
